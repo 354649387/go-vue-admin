@@ -27,7 +27,7 @@
 			</div>
 		</el-form>
 
-		<el-button type="primary" size="medium">新增</el-button>
+		<el-button type="primary" size="medium" @click="addAdmin()">新增</el-button>
 		<el-table :data="tableData" style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
 			<el-table-column prop="date" label="日期" sortable width="180">
 			</el-table-column>
@@ -37,8 +37,8 @@
 			</el-table-column>
 			<el-table-column label="操作">
 				<template #default="scope">
-					<el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-					<el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+					<el-button size="mini" @click="updateAdmin(scope.$index, scope.row)">编辑</el-button>
+					<el-button size="mini" type="danger" @click="deleteAdmin(scope.$index, scope.row)">删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -115,12 +115,17 @@
 			onSubmit() {
 				console.log('submit!');
 			},
-			handleEdit(index, row) {
+			updateAdmin(index, row) {
+				this.$router.push({name:'adminEdit',params:{id:row.id}})
+			},
+			deleteAdmin(index, row) {
 				console.log(index, row);
 			},
-			handleDelete(index, row) {
-				console.log(index, row);
-			}
+			addAdmin(){
+				
+				this.$router.push({name:'adminEdit'})
+				
+			},
 		}
 	}
 </script>
