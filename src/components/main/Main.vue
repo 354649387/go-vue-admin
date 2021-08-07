@@ -49,7 +49,7 @@
 			<el-main>
 				<router-view></router-view>
 				<el-card shadow="hover" style="position: relative;bottom: -250px;">
-					<span class="bottom-word">{{bottomWord.word}}</span>
+					<span class="bottom-word" v-for="item in bottomWord" :key="item.author">{{item.content}}</span>
 				</el-card>
 			</el-main>
 		</el-container>
@@ -66,13 +66,29 @@
 				name: '王小虎',
 				address: '上海市普陀区金沙江路 1518 弄'
 			};
-			const bottomWords = [
-				{word:'坚持不一定胜利，胜利一定需要坚持'},{word:'坚持不一定胜利，胜利一定需要坚持1'},{word:'坚持不一定胜利，胜利一定需要坚持2'}]
 			return {
-				bottomWord:bottomWords[Math.floor(Math.random() * bottomWords.length + 1)-1],
+				bottomWord: [],
 				tableData: Array(10).fill(item),
 				url: logo,
 			}
+		},
+		methods:{
+			
+			getBottomWord(){
+				
+				//天行数据接口
+				this.$axios.get('http://api.tianapi.com/txapi/qingshi/index?key=f49ebd707cdbe796efb34b52f595922f').then(response => {
+
+					this.bottomWord = response.data.newslist
+				});
+				
+			}
+			
+		},
+		created() {
+			
+			this.getBottomWord()
+
 		}
 	};
 </script>

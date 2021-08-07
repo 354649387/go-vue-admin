@@ -116,16 +116,26 @@
 				console.log('submit!');
 			},
 			updateArticle(index, row) {
-				this.$router.push({name:'articleEdit',params:{id:row.id}})
+				this.$router.push({
+					name: 'articleEdit',
+					params: {
+						id: row.id
+					}
+				})
 			},
 			deleteArticle(index, row) {
 				console.log(index, row);
 			},
-			addArticle(){
-				
-				this.$router.push({name:'articleEdit'})
-				
+			addArticle() {
+
+				this.$router.push({
+					name: 'articleEdit'
+				})
+
 			},
+		},
+		created() {
+
 		}
 	}
 </script>

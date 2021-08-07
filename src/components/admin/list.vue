@@ -29,11 +29,9 @@
 
 		<el-button type="primary" size="medium" @click="addAdmin()">新增</el-button>
 		<el-table :data="tableData" style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
-			<el-table-column prop="date" label="日期" sortable width="180">
+			<el-table-column prop="username" label="姓名" width="180">
 			</el-table-column>
-			<el-table-column prop="name" label="姓名" width="180">
-			</el-table-column>
-			<el-table-column prop="address" label="地址" :formatter="formatter">
+			<el-table-column prop="password" label="密码" width="180">
 			</el-table-column>
 			<el-table-column label="操作">
 				<template #default="scope">
@@ -52,23 +50,7 @@
 	export default {
 		data() {
 			return {
-				tableData: [{
-					date: '2016-05-02',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-04',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1517 弄'
-				}, {
-					date: '2016-05-01',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1519 弄'
-				}, {
-					date: '2016-05-03',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1516 弄'
-				}],
+				tableData: [],
 				form: {
 					title: '',
 					categorys: [{
@@ -126,6 +108,18 @@
 				this.$router.push({name:'adminEdit'})
 				
 			},
+			getAdminList(){
+				
+				this.$axios.get('/api/admin/list').then(re => {
+					console.log(re)
+					console.log(re.data.list)
+					this.tableData = re.data.list
+				})
+				
+			}
+		},
+		created() {
+			this.getAdminList()
 		}
 	}
 </script>
