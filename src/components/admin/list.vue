@@ -40,7 +40,9 @@
 				</template>
 			</el-table-column>
 		</el-table>
-		<el-pagination background layout="prev, pager, next" :total="1000" style="margin-top: 50px;">
+		<el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+			:current-page="currentPage" :page-sizes="[10, 20, 30, 40]" :page-size='pageSize'
+			layout="total, sizes, prev, pager, next, jumper" :total='total' style="margin-top: 50px;">
 		</el-pagination>
 	</el-card>
 
@@ -51,6 +53,10 @@
 		data() {
 			return {
 				tableData: [],
+				total: '',
+				pageSize: 10,
+				//默认的页面数
+				currentPage:1,
 				form: {
 					title: '',
 					categorys: [{
@@ -86,11 +92,40 @@
 						value: '选项5',
 						label: '小王5'
 					}],
-					admin: ''
+					admin: '',
 				}
 			}
 		},
 		methods: {
+			// //改变每页显示数量
+			handleSizeChange(val) {
+							
+				this.$axios.get('/api/admin/list',{
+					params:{
+						page:this.currentPage,
+						pageSize:val
+					}
+				}).then(re => {
+					this.tableData = re.data.admins
+					this.total = re.data.total
+				})
+				
+			},
+			//页面改变时数据重新获取
+			handleCurrentChange(pageNum) {
+				
+				this.$axios.get('/api/admin/list',{
+					params:{
+						page:pageNum,
+						pageSize:this.pageSize
+					}
+				}).then(re => {
+					this.tableData = re.data.admins
+					this.total = re.data.total
+					this.currentPage = pageNum
+				})
+				
+			},
 			formatter(row) {
 				return row.address;
 			},
@@ -98,24 +133,36 @@
 				console.log('submit!');
 			},
 			updateAdmin(index, row) {
-				this.$router.push({name:'adminEdit',params:{id:row.id}})
+				this.$router.push({
+					name: 'adminEdit',
+					params: {
+						id: row.id
+					}
+				})
 			},
 			deleteAdmin(index, row) {
 				console.log(index, row);
 			},
-			addAdmin(){
-				
-				this.$router.push({name:'adminEdit'})
-				
-			},
-			getAdminList(){
-				
-				this.$axios.get('/api/admin/list').then(re => {
-					console.log(re)
-					console.log(re.data.list)
-					this.tableData = re.data.list
+			addAdmin() {
+
+				this.$router.push({
+					name: 'adminEdit'
 				})
-				
+
+			},
+			getAdminList() {
+
+				this.$axios.get('/api/admin/list',{
+					params:{
+						//传入页码和每页显示的数量
+						page:this.currentPage,
+						pageSize:this.pageSize
+					}
+				}).then(re => {
+					this.tableData = re.data.admins
+					this.total = re.data.total
+				})
+
 			}
 		},
 		created() {
