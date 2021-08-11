@@ -8,20 +8,20 @@
 
 		<el-form ref="form" :model="form" label-width="180px" style="margin-bottom: 50px;">
 			<div class="form-div" style="margin-left: 0px;">
-				<el-input placeholder="请输入标题" v-model="form.title" clearable size="small"></el-input>
+				<el-input placeholder="请输入用户名" v-model="form.username" clearable size="small"></el-input>
 			</div>
-			<div class="form-div">
+			<!-- <div class="form-div">
 				<el-select v-model="form.category" clearable placeholder="请选择栏目" size="small">
-					<el-option v-for="item in form.categorys" :key="item.value" :label="item.label" :value="item.value">
+					<el-option v-for="item in categorys" :key="item.value" :label="item.label" :value="item.value">
 					</el-option>
 				</el-select>
 			</div>
 			<div class="form-div">
 				<el-select v-model="form.admin" clearable placeholder="请选择管理员" size="small">
-					<el-option v-for="item in form.admins" :key="item.value" :label="item.label" :value="item.value">
+					<el-option v-for="item in admins" :key="item.value" :label="item.label" :value="item.value">
 					</el-option>
 				</el-select>
-			</div>
+			</div> -->
 			<div class="form-div">
 				<el-button type="primary" @click="onSubmit" size="small">搜索</el-button>
 			</div>
@@ -57,41 +57,41 @@
 				pageSize: 10,
 				//默认的页面数
 				currentPage:1,
+				categorys: [{
+					value: '1',
+					label: '游戏'
+				}, {
+					value: '2',
+					label: '动作冒险'
+				}, {
+					value: '3',
+					label: '角色扮演'
+				}, {
+					value: '4',
+					label: '新闻资讯'
+				}, {
+					value: '5',
+					label: '攻略'
+				}],
+				admins: [{
+					value: '1',
+					label: '小王1'
+				}, {
+					value: '2',
+					label: '小王2'
+				}, {
+					value: '3',
+					label: '小王3'
+				}, {
+					value: '4',
+					label: '小王4'
+				}, {
+					value: '5',
+					label: '小王5'
+				}],
 				form: {
-					title: '',
-					categorys: [{
-						value: '选项1',
-						label: '黄金糕'
-					}, {
-						value: '选项2',
-						label: '双皮奶'
-					}, {
-						value: '选项3',
-						label: '蚵仔煎'
-					}, {
-						value: '选项4',
-						label: '龙须面'
-					}, {
-						value: '选项5',
-						label: '北京烤鸭'
-					}],
+					username: '',
 					category: '',
-					admins: [{
-						value: '选项1',
-						label: '小王1'
-					}, {
-						value: '选项2',
-						label: '小王2'
-					}, {
-						value: '选项3',
-						label: '小王3'
-					}, {
-						value: '选项4',
-						label: '小王4'
-					}, {
-						value: '选项5',
-						label: '小王5'
-					}],
 					admin: '',
 				}
 			}
@@ -130,7 +130,15 @@
 				return row.address;
 			},
 			onSubmit() {
-				console.log('submit!');
+				console.log(this.form);
+				this.$axios.get('/api/admin/search',{
+					params:{
+						username:this.form.username,
+					}
+				}).then(re => {
+					this.tableData = re.data.searchResult
+					this.total = re.data.total
+				});
 			},
 			updateAdmin(index, row) {
 				this.$router.push({
