@@ -6,14 +6,28 @@
 			</div>
 		</template>
 
-		<Search v-bind:showConfig="showConfig"></Search>
+		<!-- <Search v-bind:searchList="searchList" @search="search"></Search> -->
+		<Search @search="search"></Search>
+
 
 		<el-button type="primary" size="medium" @click="addArticle()">新增</el-button>
 		<el-table :data="tableData" style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
+
 			<el-table-column prop="id" label="Id" sortable width="180">
 			</el-table-column>
+
 			<el-table-column prop="title" label="标题" width="180">
 			</el-table-column>
+
+			<el-table-column prop="cid" label="cid" width="180">
+			</el-table-column>
+
+			<el-table-column prop="aid" label="aid" width="180">
+			</el-table-column>
+			
+			<el-table-column prop="status" label="status" width="180">
+			</el-table-column>
+
 			<el-table-column label="操作">
 				<template #default="scope">
 					<el-button size="mini" @click="updateArticle(scope.$index, scope.row)">编辑</el-button>
@@ -36,14 +50,7 @@
 		},
 		data() {
 			return {
-
 				tableData: [],
-				//搜索条件显示配置
-				showConfig: {
-					titleShow: true,
-					categoryShow: true,
-					adminShow: true
-				}
 			}
 		},
 		methods: {
@@ -77,6 +84,22 @@
 					this.tableData = re.data.articleList
 				});
 
+			},
+			search(val){
+				
+				console.log(val)
+				
+				this.$axios.get("/api/search/article",{
+					params:{
+						title:val.title,
+						cid:val.cid,
+						aid:val.aid
+					}
+				}).then(re => {
+					console.log(re.data)
+					this.tableData = re.data.articleList
+				});
+			
 			}
 		},
 		created() {
