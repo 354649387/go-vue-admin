@@ -6,9 +6,7 @@
 			</div>
 		</template>
 
-		<!-- <Search v-bind:searchList="searchList" @search="search"></Search> -->
-		<Search @search="search"></Search>
-
+		<Search @search="search" v-bind:showConfig="showConfig"></Search>
 
 		<el-button type="primary" size="medium" @click="addArticle()">新增</el-button>
 		<el-table :data="tableData" style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
@@ -35,7 +33,9 @@
 				</template>
 			</el-table-column>
 		</el-table>
-		<el-pagination background layout="prev, pager, next" :total="1000" style="margin-top: 50px;">
+		<el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+			:current-page="currentPage" :page-sizes="[10, 20, 30, 40]" :page-size='pageSize'
+			layout="total, sizes, prev, pager, next, jumper" :total='total' style="margin-top: 50px;">
 		</el-pagination>
 	</el-card>
 
@@ -51,9 +51,56 @@
 		data() {
 			return {
 				tableData: [],
+				total: '',
+				pageSize: 10,
+				//默认的页面数
+				currentPage:1,
+				//搜索条件显示配置
+				showConfig:{
+					//标题搜索框
+					title:true,
+					//用户名搜索框
+					name:false,
+					//栏目选择框
+					category:true,
+					//管理员选择框
+					admin:true,
+				}
 			}
 		},
 		methods: {
+			//改变每页显示数量
+			handleSizeChange(val) {
+				console.log(this.currentPage) //1
+				console.log(val) //20
+				//点击改变每页显示数量，传递也没显示的数值和当前页码数
+				this.$axios.get('/api/article/list',{
+					params:{
+						page:this.currentPage,
+						pageSize:val
+					}
+				}).then(re => {
+					this.tableData = re.data.articleList
+					this.total = re.data.total
+					this.pageSize = val
+				})
+				
+			},
+			//页面改变时数据重新获取
+			handleCurrentChange(pageNum) {
+
+				this.$axios.get('/api/article/list',{
+					params:{
+						page:pageNum,
+						pageSize:this.pageSize
+					}
+				}).then(re => {
+					this.tableData = re.data.articleList
+					this.total = re.data.total
+					this.currentPage = pageNum
+				})
+				
+			},
 			formatter(row) {
 				return row.address;
 			},
@@ -74,7 +121,7 @@
 			addArticle() {
 
 				this.$router.push({
-					name: 'articleEdit'
+					name: 'articleAdd'
 				})
 
 			},
@@ -82,6 +129,7 @@
 
 				this.$axios.get("/api/article/list").then(re => {
 					this.tableData = re.data.articleList
+					this.total = re.data.total
 				});
 
 			},
@@ -97,7 +145,8 @@
 					}
 				}).then(re => {
 					console.log(re.data)
-					this.tableData = re.data.articleList
+					this.tableData = re.data.searchList
+					this.total = re.data.total
 				});
 			
 			}

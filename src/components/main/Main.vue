@@ -3,7 +3,7 @@
 
 		<el-header style="background-color:#545c64">
 			<div id="container_logo">
-				<el-image :src="url" :fit="fill"></el-image>
+				<router-link to="/main/welcome"><el-image :src="url" :fit="fill"></el-image></router-link>
 			</div>
 			<div id="container_admin">
 				<span style="margin-right: 10px;">mila</span>
