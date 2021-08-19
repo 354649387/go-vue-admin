@@ -22,7 +22,7 @@
 
 			<el-table-column prop="aid" label="aid" width="180">
 			</el-table-column>
-			
+
 			<el-table-column prop="status" label="status" width="180">
 			</el-table-column>
 
@@ -54,69 +54,110 @@
 				total: '',
 				pageSize: 10,
 				//默认的页面数
-				currentPage:1,
+				currentPage: 1,
 				//搜索条件显示配置
-				showConfig:{
+				showConfig: {
 					//标题搜索框
-					title:true,
+					title: true,
 					//用户名搜索框
-					name:false,
+					name: false,
 					//栏目选择框
-					category:true,
+					category: true,
 					//管理员选择框
-					admin:true,
+					admin: true,
 				}
 			}
 		},
 		methods: {
 			//改变每页显示数量
 			handleSizeChange(val) {
-				console.log(this.currentPage) //1
-				console.log(val) //20
+
 				//点击改变每页显示数量，传递也没显示的数值和当前页码数
-				this.$axios.get('/api/article/list',{
-					params:{
-						page:this.currentPage,
-						pageSize:val
+				this.$axios.get('/api/article/list', {
+					params: {
+						page: this.currentPage,
+						pageSize: val
 					}
 				}).then(re => {
 					this.tableData = re.data.articleList
 					this.total = re.data.total
 					this.pageSize = val
 				})
-				
+
 			},
 			//页面改变时数据重新获取
 			handleCurrentChange(pageNum) {
 
-				this.$axios.get('/api/article/list',{
-					params:{
-						page:pageNum,
-						pageSize:this.pageSize
+				this.$axios.get('/api/article/list', {
+					params: {
+						page: pageNum,
+						pageSize: this.pageSize
 					}
 				}).then(re => {
 					this.tableData = re.data.articleList
 					this.total = re.data.total
 					this.currentPage = pageNum
 				})
-				
+
 			},
 			formatter(row) {
 				return row.address;
 			},
-			onSubmit() {
-				console.log('submit!');
-			},
 			updateArticle(index, row) {
+				
 				this.$router.push({
-					name: 'articleEdit',
-					params: {
-						id: row.id
+					name: 'articleUpdate',
+					query: {
+						id: row.id,
 					}
 				})
 			},
-			deleteArticle(index, row) {
-				console.log(index, row);
+			//删除文章
+			deleteArticle(index,row) {
+				
+				this.$confirm('确定删除该文章吗？', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning',
+					// center: true
+				}).then(() => {
+			
+					this.$axios.get('/api/article/delete', {
+			
+							params:{
+								id : row.id
+							}
+			
+						})
+						.then(res => {
+			
+							if (res.status == 200) {
+			
+								this.$message({
+									type: 'success',
+									message: '删除成功!'
+								});
+			
+								this.getArticle()
+			
+							}
+			
+						})
+						.catch(() => {
+			
+							// ElMessage.error('删除失败')
+			
+						})
+			
+			
+			
+				}).catch(() => {
+					this.$message({
+						type: 'warning',
+						message: '已取消删除'
+					});
+				});
+			
 			},
 			addArticle() {
 
@@ -128,27 +169,28 @@
 			getArticle() {
 
 				this.$axios.get("/api/article/list").then(re => {
+					
 					this.tableData = re.data.articleList
 					this.total = re.data.total
 				});
 
 			},
-			search(val){
-				
-				console.log(val)
-				
-				this.$axios.get("/api/search/article",{
-					params:{
-						title:val.title,
-						cid:val.cid,
-						aid:val.aid
+			search(val) {
+
+	
+
+				this.$axios.get("/api/search/article", {
+					params: {
+						title: val.title,
+						cid: val.cid,
+						aid: val.aid
 					}
 				}).then(re => {
-					console.log(re.data)
+		
 					this.tableData = re.data.searchList
 					this.total = re.data.total
 				});
-			
+
 			}
 		},
 		created() {
