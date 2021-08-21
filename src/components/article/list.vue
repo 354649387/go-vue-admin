@@ -169,7 +169,7 @@
 			getArticle() {
 
 				this.$axios.get("/api/article/list").then(re => {
-					
+					console.log(re.data.articleList)
 					this.tableData = re.data.articleList
 					this.total = re.data.total
 				});
