@@ -130,31 +130,71 @@
 				return row.address;
 			},
 			onSubmit() {
-				console.log(this.form);
-				this.$axios.get('/api/admin/search',{
+				this.$axios.get('/api/search/admin',{
 					params:{
 						username:this.form.username,
 					}
 				}).then(re => {
-					this.tableData = re.data.searchResult
+					this.tableData = re.data.searchList
 					this.total = re.data.total
 				});
 			},
 			updateAdmin(index, row) {
 				this.$router.push({
 					name: 'adminEdit',
-					params: {
+					query: {
 						id: row.id
 					}
 				})
 			},
 			deleteAdmin(index, row) {
-				console.log(index, row);
+				this.$confirm('确定删除该管理员吗？', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning',
+					// center: true
+				}).then(() => {
+							
+					this.$axios.get('/api/admin/delete', {
+							
+							params:{
+								id : row.id
+							}
+							
+						})
+						.then(res => {
+							
+							if (res.status == 200) {
+							
+								this.$message({
+									type: 'success',
+									message: '删除成功!'
+								});
+							
+								this.getAdminList()
+							
+							}
+							
+						})
+						.catch(() => {
+							
+							// ElMessage.error('删除失败')
+							
+						})
+							
+							
+							
+				}).catch(() => {
+					this.$message({
+						type: 'warning',
+						message: '已取消删除'
+					});
+				});
 			},
 			addAdmin() {
 
 				this.$router.push({
-					name: 'adminEdit'
+					name: 'adminAdd'
 				})
 
 			},
@@ -167,7 +207,7 @@
 						pageSize:this.pageSize
 					}
 				}).then(re => {
-					this.tableData = re.data.admins
+					this.tableData = re.data.adminList
 					this.total = re.data.total
 				})
 

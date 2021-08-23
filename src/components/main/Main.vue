@@ -6,13 +6,13 @@
 				<router-link to="/main/welcome"><el-image :src="url" :fit="fill"></el-image></router-link>
 			</div>
 			<div id="container_admin">
-				<span style="margin-right: 10px;">mila</span>
+				<span style="margin-right: 10px;">{{admin}}</span>
 				<el-dropdown>
 					<span style="font-size: 25px;color: antiquewhite;"><i class="el-icon-user-solid"></i></span>
 					<template #dropdown>
 						<el-dropdown-menu>
 							<el-dropdown-item>查看</el-dropdown-item>
-							<el-dropdown-item>退出</el-dropdown-item>
+							<el-dropdown-item><router-link to="/login">退出</router-link></el-dropdown-item>
 						</el-dropdown-menu>
 					</template>
 				</el-dropdown>
@@ -70,6 +70,7 @@
 				bottomWord: [],
 				tableData: Array(10).fill(item),
 				url: logo,
+				admin:''
 			}
 		},
 		methods:{
@@ -86,7 +87,7 @@
 			
 		},
 		created() {
-			
+			this.admin = this.$route.params.username
 			this.getBottomWord()
 
 		}
